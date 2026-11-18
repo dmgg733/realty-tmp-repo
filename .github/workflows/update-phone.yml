@@ -1,0 +1,25 @@
+name: Update phone
+on:
+  workflow_dispatch:
+    inputs:
+      phone:
+        description: "Новый номер, например +79991234567"
+        required: true
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace phone
+        env:
+          PHONE: ${{ inputs.phone }}
+        run: python3 set_phone.py
+      - name: Commit
+        run: |
+          git config user.name "feed-bot"
+          git config user.email "feed-bot@users.noreply.github.com"
+          git add feed.xml
+          git commit -m "Update phone" || exit 0
+          git push
